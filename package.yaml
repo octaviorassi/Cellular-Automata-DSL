@@ -1,12 +1,19 @@
 name: cellular-automaton-dsl
 version: 0.1.0.0
 dependencies:
-  - base >=4.7 && <5
-  - parsec
-  -
+  - base >= 4.7 && < 5
+  - parsec >= 3.1       
+  - vector >= 0.13 
+  - mtl  
 
 library:
   source-dirs: src
+
+exposed-modules:
+    - AST              
+    - Parser           
+    - TokenParser      
+    - Grid 
 
 executables:
   cellular-automaton-dsl-exe:

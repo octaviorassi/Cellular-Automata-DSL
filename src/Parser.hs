@@ -1,10 +1,10 @@
 module Parser where
 
-import           Text.ParserCombinators.Parsec
+import           Text.ParserCombinators.Parsec hiding (State) -- Por mi tipo State
 import           Text.Parsec.Token
 import           Text.Parsec.Language           ( emptyDef )
 import           AST
-
+import Prelude 
 
 -- Analizador de Tokens
 sca :: TokenParser u
@@ -14,8 +14,10 @@ sca = makeTokenParser
     , commentEnd      = "*/"
     , commentLine     = "//"
     , opLetter        = char '='
-    , reservedNames   = ["true", "false", "if", "then", "else", "not"
-                         "alive", "dead"
+    , reservedNames   = ["true", "false", "if", "then", "else", "not", "is",
+                         "withProbability", "do", "random", "count",
+                         "defineGrid", "defineNeighborhood", "defineStep", "defineLayout",
+                         "alive", "dead",
                          "topleft", "top", "topright",
                          "left", "self", "right",
                          "bottomleft", "bottom", "bottomright"]
@@ -31,15 +33,58 @@ sca = makeTokenParser
                         , "="
                         , "=="
                         , "!="
-                        , ";"
                         , ","
-                        , "++"
-                        , "--"
                         ]
     }
   )
 
+-----------------------------------
+--- Parser del programa
+-----------------------------------
 
+programParser :: Parser Program
+programParser = do
+    size    <- gridSizeParser
+    neigh   <- neighborhoodParser
+    step    <- stepParser
+    layout  <- layoutParser
+    eof 
+    return (Program size neigh step layout)
+
+gridSizeParser :: Parser (Int, Int)
+gridSizeParser = do
+    reserved sca "defineGridSize"
+    w <- natural sca
+    h <- natural sca
+    return (fromInteger w, fromInteger h)
+
+neighborhoodParser :: Parser Neighborhood
+neighborhoodParser = do
+    reserved sca "defineNeighborhood"
+    choice [ reserved sca "moore" >> return Moore
+           , reserved sca "vonNeumann" >> return VonNeumann
+           ]
+
+stepParser :: Parser Step
+stepParser = do reserved sca "defineStep"
+                s <- stateexp
+                return s
+
+-- Es una lista de las posiciones que arrancaran Alive
+layoutParser :: Parser Layout
+layoutParser = do reserved sca "defineLayout"
+                  pairs <- brackets sca pairList
+                  return pairs
+
+pairList :: Parser [Position]
+pairList = sepBy1 pair (comma sca)  -- Al menos un par separados por coma
+
+pair :: Parser (Int, Int)
+pair = parens sca $ do
+    x <- natural sca
+    comma sca
+    y <- natural sca
+    return (fromInteger x, fromInteger y)
 
 -----------------------------------
 --- Parser de expresiones enteras
@@ -108,10 +153,21 @@ atomBoolParser = (try (parens sca boolexp))                                     
 
 isNeighborParser :: Parser (Exp Bool)
 isNeighborParser = do n <- neighborParser
-              reserved sca "is"
-              s <- stateexp
-              return (IsNeighbor n s)
+                      reserved sca "is"
+                      s <- stateexp
+                      return (IsNeighbor n s)
 
+neighborParser :: Parser Neighbor
+neighborParser = 
+      (reserved sca "topLeft"     >> return TopLeft)
+  <|> (reserved sca "topRight"    >> return TopRight)
+  <|> (reserved sca "top"         >> return Top)
+  <|> (reserved sca "left"        >> return LeftNeigh)
+  <|> (reserved sca "self"        >> return Self)
+  <|> (reserved sca "right"       >> return RightNeigh)
+  <|> (reserved sca "bottomLeft"  >> return BottomLeft)
+  <|> (reserved sca "bottomRight" >> return BottomRight)
+  <|> (reserved sca "bottom"      >> return Bottom)
 
 ------------------------------------------
 --- Parser de expresiones probabilisticas
@@ -128,9 +184,9 @@ stateexp =
 -- Estados basicos
 aliveDeadParser :: Parser (Exp State)
 aliveDeadParser = 
-    (reserved sca "alive" >> return Alive)
+    (reserved sca "alive" >> return EAlive)
     <|> 
-    (reserved sca "dead" >> return Dead)
+    (reserved sca "dead" >> return EDead)
 
 -- Expresion IfThenElse para estados.
 ifThenElseParser :: Parser (Exp State)
@@ -141,14 +197,14 @@ ifThenElseParser = do
     thenExp <- stateexp
     reserved sca "else"
     elseExp <- stateexp
-    return (SIfThenElse cond thenExp elseExp)
+    return (IfThenElse cond thenExp elseExp)
 
 -- Negacion de estados
 notParser :: Parser (Exp State)
 notParser = do
     reserved sca "not"
     s <- stateexp
-    return (SNot s)
+    return (NotState s)
 
 -- Expresion de estado probabilistica
 withProbabilityParser :: Parser (Exp State)
@@ -164,12 +220,36 @@ withProbabilityParser = do
 -- Parser de probabilidad; permitimos que introduzca un numero natural como porcentaje o un decimal.
 -- Obs. que ese numero natural debe ser una constante y no una expresion entera. 
 -- Tampoco chequeamos aca que el valor de p tenga sentido, simplemente parseamos. 
-probParser :: Parser Double
-probParser = do try percentageParser <|> decimalParser
+probParser :: Parser Probability
+probParser = try percentageParser <|>
+             try decimalParser <|>
+             try randomParser
   where
     percentageParser  = do  n <- natural sca  
                             optional (symbol sca "%")
-                            return (fromInteger n / 100)
+                            return (Prob (fromInteger n / 100))
     
     decimalParser     = do  n <- float sca    
-                            return n      
+                            return (Prob n)   
+
+    randomParser = do reserved sca "random"
+                      return Random   
+
+
+------------------------------------
+-- Función de parseo
+------------------------------------
+
+parseComm :: SourceName -> String -> Either ParseError Comm
+parseComm = parse (totParser comm)
+
+----------------------------------------------
+-- Función para facilitar el testing del parser.
+----------------------------------------------
+
+totParser :: Parser a -> Parser a
+totParser p = do
+  whiteSpace lis
+  t <- p
+  eof
+  return t
