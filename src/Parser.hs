@@ -1,4 +1,7 @@
-module Parser where
+module Parser
+  ( parseFile  -- Make sure this is exported
+  , programParser
+  ) where
 
 import           Text.ParserCombinators.Parsec hiding (State) -- Por mi tipo State
 import           Text.Parsec.Token
@@ -42,13 +45,14 @@ sca = makeTokenParser
 --- Parser del programa
 -----------------------------------
 
+testString = "defineGridSize 20 20 \n defineNeighborhood moore \n defineStep if true then dead else alive \n defineLayout [(0,0), (1,1)]"
+
 programParser :: Parser Program
 programParser = do
     size    <- gridSizeParser
     neigh   <- neighborhoodParser
     step    <- stepParser
     layout  <- layoutParser
-    eof 
     return (Program size neigh step layout)
 
 gridSizeParser :: Parser (Int, Int)
@@ -239,17 +243,12 @@ probParser = try percentageParser <|>
 ------------------------------------
 -- Función de parseo
 ------------------------------------
-
-parseComm :: SourceName -> String -> Either ParseError Comm
-parseComm = parse (totParser comm)
-
-----------------------------------------------
--- Función para facilitar el testing del parser.
-----------------------------------------------
+parseFile :: String -> Either ParseError Program
+parseFile input = parse (totParser programParser) "" input
 
 totParser :: Parser a -> Parser a
 totParser p = do
-  whiteSpace lis
+  whiteSpace sca
   t <- p
   eof
   return t

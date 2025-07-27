@@ -5,6 +5,7 @@ dependencies:
   - parsec >= 3.1       
   - vector >= 0.13 
   - mtl  
+  - random
 
 library:
   source-dirs: src

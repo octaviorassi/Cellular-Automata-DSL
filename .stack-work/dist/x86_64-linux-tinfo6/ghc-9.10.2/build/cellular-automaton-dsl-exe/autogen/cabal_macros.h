@@ -40,6 +40,16 @@
   (major1) == 3 && (major2) <  1 || \
   (major1) == 3 && (major2) == 1 && (minor) <= 18)
 #endif /* MIN_VERSION_parsec */
+/* package random-1.2.1.3 */
+#ifndef VERSION_random
+#define VERSION_random "1.2.1.3"
+#endif /* VERSION_random */
+#ifndef MIN_VERSION_random
+#define MIN_VERSION_random(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  2 || \
+  (major1) == 1 && (major2) == 2 && (minor) <= 1)
+#endif /* MIN_VERSION_random */
 /* package vector-0.13.2.0 */
 #ifndef VERSION_vector
 #define VERSION_vector "0.13.2.0"
@@ -143,7 +153,7 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "cellular-automaton-dsl-0.1.0.0-EGFbptd6inXFwEPHHPUy4i-cellular-automaton-dsl-exe"
+#define CURRENT_COMPONENT_ID "cellular-automaton-dsl-0.1.0.0-4zJ5kL7aRnUGW291yHrO5C-cellular-automaton-dsl-exe"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"

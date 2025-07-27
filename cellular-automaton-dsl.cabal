@@ -23,6 +23,7 @@ library
       base >=4.7 && <5
     , mtl
     , parsec >=3.1
+    , random
     , vector >=0.13
   default-language: Haskell2010
 
@@ -36,5 +37,6 @@ executable cellular-automaton-dsl-exe
       base >=4.7 && <5
     , mtl
     , parsec >=3.1
+    , random
     , vector >=0.13
   default-language: Haskell2010

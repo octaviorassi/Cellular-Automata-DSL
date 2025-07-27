@@ -5,21 +5,21 @@ module AST where
 
 import qualified Data.Vector as V
 
-data Neighborhood = Moore | VonNeumann
+data Neighborhood = Moore | VonNeumann deriving (Show)
 data Neighbor     =   TopLeft     | Top    | TopRight  
                     | LeftNeigh   | Self   | RightNeigh  
                     | BottomLeft  | Bottom | BottomRight 
                     deriving (Show, Eq)
 
 type GridSize = (Int, Int)
-newtype Grid = Grid (V.Vector (V.Vector State))
-type Position = (Int, Int)
+type Grid = (V.Vector (V.Vector State))
+type Position = (Int, Int) 
 type Layout = [Position]
 data Probability = Prob Double | Random deriving (Show, Eq)
 data State = Dead | Alive deriving (Show, Eq)
 
 type Step = Exp State
-data Program = Program GridSize Neighborhood Step Layout | InvalidProgram
+data Program = Program GridSize Neighborhood Step Layout | InvalidProgram deriving (Show)
 
 data Exp a where
   

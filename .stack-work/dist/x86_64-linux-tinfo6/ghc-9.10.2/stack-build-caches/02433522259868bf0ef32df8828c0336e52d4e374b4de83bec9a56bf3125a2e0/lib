@@ -1,18 +1,18 @@
 ? /home/octavio/.stack/programs/x86_64-linux/ghc-tinfo6-9.10.2/lib/ghc-9.10.2/lib/x86_64-linux-ghc-9.10.2/rts-1.0.2/include/ghcversion.h
 : hash: c52a97980facd4ffbe17b1f1eec95b8061f4dbbf4ce69384e851f410cb70dc0a
 ? /home/octavio/materias/alp/cellular-automaton-dsl/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.10.2/build/autogen/Paths_cellular_automaton_dsl.hs
-: hash: bfecc3b310f8efb3026d063ae0ec42f5aaed70c67fbea40efaf35c0afe6af8bd
+: hash: db81c00b0109ea5ca2938864fa20de53d7e64313c6ff48b9a8328ac3a1c121e4
 /home/octavio/materias/alp/cellular-automaton-dsl/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.10.2/build/autogen/cabal_macros.h:
-  hash: 7f8f6e8f1d36910af543632dc9c4325f8e0fd3c06f2b73425330276ca5d0c1cb
+  hash: 881b3ace83b76e73d95702ba1711d0f1445337c774d1f3d8f628513efb2866eb
 /home/octavio/materias/alp/cellular-automaton-dsl/cellular-automaton-dsl.cabal:
-  hash: a8c937eb5ad92eb656727136015317e0d8cd1dd7c537a464ffb2ab3b00b00b47
+  hash: 02418589b403aec993e6373805846571ede93dd568f3894ac531c0a646ea59ef
 /home/octavio/materias/alp/cellular-automaton-dsl/package.yaml:
-  hash: f159ceb5a759d6c6c386a65564e187682ce9ca964324ca8c06af2b73a7ffb59e
+  hash: 48dc043a42f927c4ec62c715771a97bc54c1ebea5eacdfcc28d149e1eeec10f4
 /home/octavio/materias/alp/cellular-automaton-dsl/src/AST.hs:
-  hash: 9171a7fea0fed27a0b5ae1a549b7bc0b4a83810cab134aa4f19eaa9f59b531d3
+  hash: 65063ce895240673acad945b09823ec756390184b7259e5c22a8b20a8f80a5b1
 /home/octavio/materias/alp/cellular-automaton-dsl/src/Eval.hs:
-  hash: 546a2df3cdd61a93f27302a536796e0c722ba0a37db84f79a20f4982af131dbc
+  hash: a902a4e9322ebc13f7e0063f76513c8e2a5a05cd27e1f7f03621909a630ce326
 /home/octavio/materias/alp/cellular-automaton-dsl/src/Parser.hs:
-  hash: 83f160d741a0b8acf4849d721efd46915e63827352554f81ee6c2a04be0b1fe9
+  hash: 5777509a8271a38fc7b0a620a9a1b3dd321317270411175df67e37a9865513f9
 /usr/include/stdc-predef.h:
   hash: 8db4f65e62cade8ae4d9b77960ee6aee093255acc1b637e3fb37d79179733b15
