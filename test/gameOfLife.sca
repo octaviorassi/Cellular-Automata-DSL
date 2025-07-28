@@ -1,7 +1,5 @@
 defineGridSize 40 40
 
-defineNeighborhood moore
-
 defineStep if self is alive
            then (if (count alive < 2)
                  then dead

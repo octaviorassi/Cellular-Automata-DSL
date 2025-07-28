@@ -2,39 +2,68 @@
 {-# LANGUAGE StandaloneDeriving #-}
 
 module AST
-  ( Program(..)
+  ( -- * Tipos principales
+    Program(..)
   , State(..)
   , Neighborhood(..)
   , Probability(..)
   , Neighbor(..)
   , Exp(..)
+    
+    -- * Alias de tipos
   , Position
   , Grid
   , GridSize
   , Layout
   , Step
   , Seed
-  -- ... other exports
   ) where
 
 import qualified Data.Vector as V
 
-data Neighborhood = Moore | VonNeumann deriving (Show)
+-------------------------------------------------------------------------------
+-- * Tipos basicos del autómata celular
+-------------------------------------------------------------------------------
+
+-- | Estado posible de una célula
+data State = Dead   -- ^ Célula muerta
+           | Alive  -- ^ Célula viva
+           deriving (Show, Eq)
+
+-- | Posición en la grilla (fila, columna)
+type Position = (Int, Int)
+
+-- | Tamaño de la grilla (ancho, alto)
+type GridSize = (Int, Int)
+
+-- | Grilla representada como vector de vectores
+type Grid = V.Vector (V.Vector State)
+
+-- | Configuración inicial de células vivas
+type Layout = [Position]
+
+-- | Semilla para generación de números aleatorios en caso de utilizarlos
+type Seed = Int
+
+-- | Tipo de vecindad para las reglas de evolucion
+data Neighborhood = Moore      -- ^ Vecindad de Moore (8 vecinos)
+                  | VonNeumann -- ^ Vecindad de Von Neumann (4 vecinos)
+                  deriving (Show)
+
+-- | Posiciones relativas de los vecinos
 data Neighbor     =   TopLeft     | Top    | TopRight  
                     | LeftNeigh   | Self   | RightNeigh  
                     | BottomLeft  | Bottom | BottomRight 
                     deriving (Show, Eq)
 
-type GridSize = (Int, Int)
-type Grid = (V.Vector (V.Vector State))
-type Position = (Int, Int) 
-type Layout = [Position]
-data Probability = Prob Double | Random deriving (Show, Eq)
-data State = Dead | Alive deriving (Show, Eq)
+-- | Representación de probabilidades para reglas estocásticas
+data Probability = Prob Double  -- ^ Probabilidad explícita (0.0 a 1.0)
+                 | Random       -- ^ Probabilidad aleatoria (50%)
+                 deriving (Show, Eq)
 
-type Step = Exp State
-type Seed = Int
-data Program = Program GridSize Neighborhood Step Layout Seed | InvalidProgram deriving (Show)
+-------------------------------------------------------------------------------
+-- * Expresiones del lenguaje (GADT)
+-------------------------------------------------------------------------------
 
 data Exp a where
   
@@ -69,15 +98,17 @@ data Exp a where
 deriving instance Show (Exp a)
 deriving instance Eq (Exp a)
 
+-- | Regla de evolución (expresión que devuelve State)
+type Step = Exp State
 
-defaultGridSize :: (Int, Int)
-defaultGridSize = (25, 25)  
+-- | Programa completo del autómata celular
+data Program = Program
+  { gridSize      :: GridSize      -- ^ Tamaño de la grilla
+  , neighborhood  :: Neighborhood  -- ^ Tipo de vecindad
+  , stepRule      :: Step          -- ^ Regla de evolución
+  , initialLayout :: Layout        -- ^ Posiciones iniciales vivas
+  , seed          :: Seed          -- ^ Semilla aleatoria
+  }
+  | InvalidProgram  -- ^ Programa inválido 
+  deriving (Show)
 
-defaultNeighborhood :: Neighborhood
-defaultNeighborhood = Moore 
-
-defaultSeed :: Int
-defaultSeed = 42  
-
-defaultLayout :: Layout
-defaultLayout = []

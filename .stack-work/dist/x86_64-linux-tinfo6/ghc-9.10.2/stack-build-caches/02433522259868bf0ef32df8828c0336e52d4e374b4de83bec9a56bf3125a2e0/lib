@@ -9,10 +9,10 @@
 /home/octavio/materias/alp/cellular-automaton-dsl/package.yaml:
   hash: 7b4b8ef48fc669639861544b3778509bc5e99e63602d226e75afa4edd7278ffe
 /home/octavio/materias/alp/cellular-automaton-dsl/src/AST.hs:
-  hash: 959e3d0a5787f8ade18353a9a06d98c8b081a4f24c8c748c287ab4538719743b
+  hash: c563a2be6844c4433eb2de1b9da07749e27d677a320af237d6cf2b0b1fbce5b7
 /home/octavio/materias/alp/cellular-automaton-dsl/src/Eval.hs:
   hash: c6f2a7d9d97b7b89060b050317d27654ed38006ef76f7c6a11188f08f813ffcc
 /home/octavio/materias/alp/cellular-automaton-dsl/src/Parser.hs:
-  hash: cbb9bdf3e7a3cd02ac2065710cd247bee7f53314ed00879df625ea385821028e
+  hash: e19a5c6c7ded60909581076f1dab1da2f4d431cf454c0f287ad00ee113cd1d9f
 /usr/include/stdc-predef.h:
   hash: 8db4f65e62cade8ae4d9b77960ee6aee093255acc1b637e3fb37d79179733b15

@@ -9,7 +9,11 @@ import           Text.Parsec.Language           ( emptyDef )
 import           AST
 import Prelude 
 
--- Analizador de Tokens
+
+-------------------------------------------------------------------------------
+-- * Analizador de tokens
+-------------------------------------------------------------------------------
+
 sca :: TokenParser u
 sca = makeTokenParser
   (emptyDef
@@ -41,11 +45,10 @@ sca = makeTokenParser
     }
   )
 
------------------------------------
---- Parser del programa
------------------------------------
 
-testString = "defineGridSize 20 20 \n defineNeighborhood moore \n defineStep if true then dead else alive \n defineLayout [(0,0), (1,1)]"
+-------------------------------------------------------------------------------
+-- * Parser del programa
+-------------------------------------------------------------------------------
 
 programParser :: Parser Program
 programParser = do
@@ -97,9 +100,27 @@ pair = parens sca $ do
     y <- natural sca
     return (fromInteger x, fromInteger y)
 
------------------------------------
---- Parser de expresiones enteras
------------------------------------
+
+-------------------------------------------------------------------------------
+-- * Valores por defecto
+-------------------------------------------------------------------------------
+
+defaultGridSize :: (Int, Int)
+defaultGridSize = (25, 25)  
+
+defaultNeighborhood :: Neighborhood
+defaultNeighborhood = Moore 
+
+defaultSeed :: Int
+defaultSeed = 42  
+
+defaultLayout :: Layout
+defaultLayout = []
+
+
+-------------------------------------------------------------------------------
+-- * Parser de expresiones enteras
+-------------------------------------------------------------------------------
 
 intexp :: Parser (Exp Int)
 intexp = chainl1 termParser addMinusOp
@@ -135,9 +156,10 @@ countParser = do
     return (Count e)
 
 
-------------------------------------
---- Parser de expresiones booleanas
-------------------------------------
+
+-------------------------------------------------------------------------------
+-- * Parser de expresiones booleanas
+-------------------------------------------------------------------------------
 
 boolexp :: Parser (Exp Bool)
 boolexp = chainl1 orTermParser ( do { reservedOp sca "||" ; return Or } )
@@ -180,9 +202,10 @@ neighborParser =
   <|> (reserved sca "bottomRight" >> return BottomRight)
   <|> (reserved sca "bottom"      >> return Bottom)
 
-------------------------------------------
---- Parser de expresiones probabilisticas
-------------------------------------------
+
+-------------------------------------------------------------------------------
+-- * Parser de expresiones de estado
+-------------------------------------------------------------------------------
 
 stateexp :: Parser (Exp State)
 stateexp = 
@@ -228,9 +251,6 @@ withProbabilityParser = do
     elseExp <- stateexp
     return (WithProbability p thenExp elseExp)
 
--- Parser de probabilidad; permitimos que introduzca un numero natural como porcentaje o un decimal.
--- Obs. que ese numero natural debe ser una constante y no una expresion entera. 
--- Tampoco chequeamos aca que el valor de p tenga sentido, simplemente parseamos. 
 probParser :: Parser Probability
 probParser = try percentageParser <|>
              try decimalParser <|>
@@ -247,9 +267,11 @@ probParser = try percentageParser <|>
                       return Random   
 
 
-------------------------------------
--- Función de parseo
-------------------------------------
+
+-------------------------------------------------------------------------------
+-- * Funcion de parseo
+-------------------------------------------------------------------------------
+
 parseFile :: String -> Either ParseError Program
 parseFile input = parse (totParser programParser) "" input
 
