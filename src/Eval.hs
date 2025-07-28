@@ -4,7 +4,7 @@
 module Eval
   (
     evalExp,
-    State
+    runEval
   )
 where
 
@@ -16,24 +16,24 @@ import System.Random (StdGen, randomR)
 
 -- Definimos la monada que utilizaremos para evaluar
 newtype EvalM a = EvalM 
-  { runEval :: Grid -> Position -> StdGen -> Maybe (a, StdGen) 
+  { runEval :: Grid -> Position -> Neighborhood -> StdGen -> Maybe (a, StdGen) 
   }
 
 instance Monad EvalM where
-  return x = EvalM $ \_ _ gen -> Just (x, gen)
-  m >>= f = EvalM $ \grid pos gen ->
-    case runEval m grid pos gen of
-      Just (x, gen') -> runEval (f x) grid pos gen'
+  return x = EvalM $ \_ _ _ gen -> Just (x, gen)
+  m >>= f = EvalM $ \grid pos neigh gen ->
+    case runEval m grid pos neigh gen of
+      Just (x, gen') -> runEval (f x) grid pos neigh gen'
       Nothing -> Nothing
 
 instance Applicative EvalM where
-  pure x = EvalM $ \_ _ gen -> Just (x, gen)
+  pure x = EvalM $ \_ _ _ gen -> Just (x, gen)
   
-  (<*>) f x = EvalM $ \grid pos gen ->
-    case runEval f grid pos gen of
+  (<*>) f x = EvalM $ \grid pos neigh gen ->
+    case runEval f grid pos neigh gen of
       Nothing -> Nothing
       Just (g, gen') ->
-        case runEval x grid pos gen' of
+        case runEval x grid pos neigh gen' of
           Nothing -> Nothing
           Just (v, gen'') -> Just (g v, gen'')  
 
@@ -43,10 +43,13 @@ instance Functor EvalM where
 
 -- Y ahora funciones auxiliares
 getGrid :: EvalM Grid
-getGrid = EvalM $ \grid _ gen -> Just (grid, gen)
+getGrid = EvalM $ \grid _ _ gen -> Just (grid, gen)
 
 getPos :: EvalM Position
-getPos = EvalM $ \_ pos gen -> Just (pos, gen)
+getPos = EvalM $ \_ pos _ gen -> Just (pos, gen)
+
+getNeighborhood :: EvalM Neighborhood
+getNeighborhood = EvalM $ \_ _ neigh gen -> Just (neigh, gen)
 
 getCurrentState :: EvalM State
 getCurrentState = do
@@ -58,12 +61,12 @@ getCurrentState = do
 
 -- Devuelve un numero entre 0 y 1 para usar en withProbability
 getRandom :: EvalM Double 
-getRandom = EvalM $ \_ _ gen ->
+getRandom = EvalM $ \_ _ _ gen ->
   let (r, gen') = randomR (0, 1) gen
   in Just (r, gen')  
 
 failEval :: EvalM a
-failEval = EvalM $ \_ _ _ -> Nothing
+failEval = EvalM $ \_ _ _ _ -> Nothing
 
 evalProb :: Probability -> EvalM Bool
 evalProb (Prob p) = do
@@ -79,18 +82,20 @@ evalProb Random = do
 getNeighbors :: EvalM [State]
 getNeighbors = do
   (y, x) <- getPos
+  neighType <- getNeighborhood  -- Get the neighborhood type
   grid <- getGrid
   let rows = V.length grid
       cols = if rows > 0 then V.length (V.head grid) else 0
+      offsets = case neighType of
+                Moore -> [ (dy, dx) | dy <- [-1..1], dx <- [-1..1], (dy, dx) /= (0, 0) ]
+                VonNeumann -> [ (-1, 0), (1, 0), (0, -1), (0, 1) ] 
       neighbors = 
         [ (y + dy, x + dx)
-        | dy <- [-1..1]
-        , dx <- [-1..1]
-        , (dy, dx) /= (0, 0)  -- No nos contamos a nosotros mismos
+        | (dy, dx) <- offsets
         , y + dy >= 0 && y + dy < rows  
         , x + dx >= 0 && x + dx < cols  
         ]
-  mapM getCell neighbors -- Ahora obtenemos los vecinos
+  mapM getCell neighbors
 
 -- Obtiene el valor en cierta celda de forma segura
 getCell :: Position -> EvalM State

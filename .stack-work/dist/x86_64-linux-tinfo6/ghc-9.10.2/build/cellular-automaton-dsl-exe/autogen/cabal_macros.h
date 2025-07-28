@@ -10,6 +10,16 @@
   (major1) == 0 && (major2) <  1 || \
   (major1) == 0 && (major2) == 1 && (minor) <= 0)
 #endif /* MIN_VERSION_cellular_automaton_dsl */
+/* package ansi-terminal-1.1.3 */
+#ifndef VERSION_ansi_terminal
+#define VERSION_ansi_terminal "1.1.3"
+#endif /* VERSION_ansi_terminal */
+#ifndef MIN_VERSION_ansi_terminal
+#define MIN_VERSION_ansi_terminal(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  1 || \
+  (major1) == 1 && (major2) == 1 && (minor) <= 3)
+#endif /* MIN_VERSION_ansi_terminal */
 /* package base-4.20.1.0 */
 #ifndef VERSION_base
 #define VERSION_base "4.20.1.0"
@@ -20,6 +30,36 @@
   (major1) == 4 && (major2) <  20 || \
   (major1) == 4 && (major2) == 20 && (minor) <= 1)
 #endif /* MIN_VERSION_base */
+/* package cellular-automaton-dsl-0.1.0.0 */
+#ifndef VERSION_cellular_automaton_dsl
+#define VERSION_cellular_automaton_dsl "0.1.0.0"
+#endif /* VERSION_cellular_automaton_dsl */
+#ifndef MIN_VERSION_cellular_automaton_dsl
+#define MIN_VERSION_cellular_automaton_dsl(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  1 || \
+  (major1) == 0 && (major2) == 1 && (minor) <= 0)
+#endif /* MIN_VERSION_cellular_automaton_dsl */
+/* package directory-1.3.8.5 */
+#ifndef VERSION_directory
+#define VERSION_directory "1.3.8.5"
+#endif /* VERSION_directory */
+#ifndef MIN_VERSION_directory
+#define MIN_VERSION_directory(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  3 || \
+  (major1) == 1 && (major2) == 3 && (minor) <= 8)
+#endif /* MIN_VERSION_directory */
+/* package filepath-1.5.4.0 */
+#ifndef VERSION_filepath
+#define VERSION_filepath "1.5.4.0"
+#endif /* VERSION_filepath */
+#ifndef MIN_VERSION_filepath
+#define MIN_VERSION_filepath(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  5 || \
+  (major1) == 1 && (major2) == 5 && (minor) <= 4)
+#endif /* MIN_VERSION_filepath */
 /* package mtl-2.3.1 */
 #ifndef VERSION_mtl
 #define VERSION_mtl "2.3.1"
@@ -153,7 +193,7 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "cellular-automaton-dsl-0.1.0.0-4zJ5kL7aRnUGW291yHrO5C-cellular-automaton-dsl-exe"
+#define CURRENT_COMPONENT_ID "cellular-automaton-dsl-0.1.0.0-1xp04gGuSNUJzP2qi5xRVo-cellular-automaton-dsl-exe"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"

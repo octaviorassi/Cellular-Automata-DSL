@@ -13,14 +13,16 @@ build-type:     Simple
 library
   exposed-modules:
       AST
-      Eval
       Parser
+      Eval
   other-modules:
       Paths_cellular_automaton_dsl
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , directory
+    , filepath
     , mtl
     , parsec >=3.1
     , random
@@ -34,7 +36,11 @@ executable cellular-automaton-dsl-exe
   hs-source-dirs:
       app
   build-depends:
-      base >=4.7 && <5
+      ansi-terminal
+    , base >=4.7 && <5
+    , cellular-automaton-dsl
+    , directory
+    , filepath
     , mtl
     , parsec >=3.1
     , random

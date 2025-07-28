@@ -1,5 +1,5 @@
 module Parser
-  ( parseFile  -- Make sure this is exported
+  ( parseFile 
   , programParser
   ) where
 
@@ -19,7 +19,7 @@ sca = makeTokenParser
     , opLetter        = char '='
     , reservedNames   = ["true", "false", "if", "then", "else", "not", "is",
                          "withProbability", "do", "random", "count",
-                         "defineGrid", "defineNeighborhood", "defineStep", "defineLayout",
+                         "defineGrid", "defineNeighborhood", "defineStep", "defineLayout", "defineSeed",
                          "alive", "dead",
                          "topleft", "top", "topright",
                          "left", "self", "right",
@@ -49,36 +49,43 @@ testString = "defineGridSize 20 20 \n defineNeighborhood moore \n defineStep if 
 
 programParser :: Parser Program
 programParser = do
-    size    <- gridSizeParser
-    neigh   <- neighborhoodParser
-    step    <- stepParser
-    layout  <- layoutParser
-    return (Program size neigh step layout)
+    size    <- option defaultGridSize gridSizeParser
+    neigh   <- option defaultNeighborhood neighborhoodParser
+    step    <- stepParser  -- No permitimos que la regla sea vacia.
+    layout  <- option defaultLayout layoutParser
+    seed    <- option defaultSeed seedParser
+    return (Program size neigh step layout seed)
 
+stepParser :: Parser Step
+stepParser = do reserved sca "defineStep"
+                s <- stateexp
+                return s
+                
 gridSizeParser :: Parser (Int, Int)
-gridSizeParser = do
+gridSizeParser = try $ do  
     reserved sca "defineGridSize"
     w <- natural sca
     h <- natural sca
     return (fromInteger w, fromInteger h)
 
 neighborhoodParser :: Parser Neighborhood
-neighborhoodParser = do
+neighborhoodParser = try $ do
     reserved sca "defineNeighborhood"
     choice [ reserved sca "moore" >> return Moore
            , reserved sca "vonNeumann" >> return VonNeumann
            ]
 
-stepParser :: Parser Step
-stepParser = do reserved sca "defineStep"
-                s <- stateexp
-                return s
+seedParser :: Parser Int
+seedParser = try $ do
+    reserved sca "defineSeed"
+    s <- natural sca
+    return (fromInteger s)
 
--- Es una lista de las posiciones que arrancaran Alive
 layoutParser :: Parser Layout
-layoutParser = do reserved sca "defineLayout"
-                  pairs <- brackets sca pairList
-                  return pairs
+layoutParser = try $ do
+    reserved sca "defineLayout"
+    pairs <- brackets sca pairList
+    return pairs
 
 pairList :: Parser [Position]
 pairList = sepBy1 pair (comma sca)  -- Al menos un par separados por coma

@@ -1,7 +1,21 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module AST where
+module AST
+  ( Program(..)
+  , State(..)
+  , Neighborhood(..)
+  , Probability(..)
+  , Neighbor(..)
+  , Exp(..)
+  , Position
+  , Grid
+  , GridSize
+  , Layout
+  , Step
+  , Seed
+  -- ... other exports
+  ) where
 
 import qualified Data.Vector as V
 
@@ -19,7 +33,8 @@ data Probability = Prob Double | Random deriving (Show, Eq)
 data State = Dead | Alive deriving (Show, Eq)
 
 type Step = Exp State
-data Program = Program GridSize Neighborhood Step Layout | InvalidProgram deriving (Show)
+type Seed = Int
+data Program = Program GridSize Neighborhood Step Layout Seed | InvalidProgram deriving (Show)
 
 data Exp a where
   
@@ -53,3 +68,16 @@ data Exp a where
 
 deriving instance Show (Exp a)
 deriving instance Eq (Exp a)
+
+
+defaultGridSize :: (Int, Int)
+defaultGridSize = (25, 25)  
+
+defaultNeighborhood :: Neighborhood
+defaultNeighborhood = Moore 
+
+defaultSeed :: Int
+defaultSeed = 42  
+
+defaultLayout :: Layout
+defaultLayout = []

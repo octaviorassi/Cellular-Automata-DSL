@@ -47,7 +47,7 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 bindir     = "/home/octavio/materias/alp/cellular-automaton-dsl/.stack-work/install/x86_64-linux-tinfo6/02433522259868bf0ef32df8828c0336e52d4e374b4de83bec9a56bf3125a2e0/9.10.2/bin"
-libdir     = "/home/octavio/materias/alp/cellular-automaton-dsl/.stack-work/install/x86_64-linux-tinfo6/02433522259868bf0ef32df8828c0336e52d4e374b4de83bec9a56bf3125a2e0/9.10.2/lib/x86_64-linux-ghc-9.10.2-2f07/cellular-automaton-dsl-0.1.0.0-B395Lqkagr76k2gMpcByWl"
+libdir     = "/home/octavio/materias/alp/cellular-automaton-dsl/.stack-work/install/x86_64-linux-tinfo6/02433522259868bf0ef32df8828c0336e52d4e374b4de83bec9a56bf3125a2e0/9.10.2/lib/x86_64-linux-ghc-9.10.2-2f07/cellular-automaton-dsl-0.1.0.0-ErUASfyrMG9DSJTxuR7gG3"
 dynlibdir  = "/home/octavio/materias/alp/cellular-automaton-dsl/.stack-work/install/x86_64-linux-tinfo6/02433522259868bf0ef32df8828c0336e52d4e374b4de83bec9a56bf3125a2e0/9.10.2/lib/x86_64-linux-ghc-9.10.2-2f07"
 datadir    = "/home/octavio/materias/alp/cellular-automaton-dsl/.stack-work/install/x86_64-linux-tinfo6/02433522259868bf0ef32df8828c0336e52d4e374b4de83bec9a56bf3125a2e0/9.10.2/share/x86_64-linux-ghc-9.10.2-2f07/cellular-automaton-dsl-0.1.0.0"
 libexecdir = "/home/octavio/materias/alp/cellular-automaton-dsl/.stack-work/install/x86_64-linux-tinfo6/02433522259868bf0ef32df8828c0336e52d4e374b4de83bec9a56bf3125a2e0/9.10.2/libexec/x86_64-linux-ghc-9.10.2-2f07/cellular-automaton-dsl-0.1.0.0"

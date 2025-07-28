@@ -20,6 +20,26 @@
   (major1) == 4 && (major2) <  20 || \
   (major1) == 4 && (major2) == 20 && (minor) <= 1)
 #endif /* MIN_VERSION_base */
+/* package directory-1.3.8.5 */
+#ifndef VERSION_directory
+#define VERSION_directory "1.3.8.5"
+#endif /* VERSION_directory */
+#ifndef MIN_VERSION_directory
+#define MIN_VERSION_directory(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  3 || \
+  (major1) == 1 && (major2) == 3 && (minor) <= 8)
+#endif /* MIN_VERSION_directory */
+/* package filepath-1.5.4.0 */
+#ifndef VERSION_filepath
+#define VERSION_filepath "1.5.4.0"
+#endif /* VERSION_filepath */
+#ifndef MIN_VERSION_filepath
+#define MIN_VERSION_filepath(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  5 || \
+  (major1) == 1 && (major2) == 5 && (minor) <= 4)
+#endif /* MIN_VERSION_filepath */
 /* package mtl-2.3.1 */
 #ifndef VERSION_mtl
 #define VERSION_mtl "2.3.1"
@@ -153,10 +173,10 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_PACKAGE_KEY
-#define CURRENT_PACKAGE_KEY "cellular-automaton-dsl-0.1.0.0-B395Lqkagr76k2gMpcByWl"
+#define CURRENT_PACKAGE_KEY "cellular-automaton-dsl-0.1.0.0-ErUASfyrMG9DSJTxuR7gG3"
 #endif /* CURRENT_packageKey */
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "cellular-automaton-dsl-0.1.0.0-B395Lqkagr76k2gMpcByWl"
+#define CURRENT_COMPONENT_ID "cellular-automaton-dsl-0.1.0.0-ErUASfyrMG9DSJTxuR7gG3"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"
