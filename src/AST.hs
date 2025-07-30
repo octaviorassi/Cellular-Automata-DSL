@@ -26,8 +26,8 @@ import qualified Data.Vector as V
 -------------------------------------------------------------------------------
 
 -- | Estado posible de una célula
-data State = Dead   -- ^ Célula muerta
-           | Alive  -- ^ Célula viva
+data State = Dead   -- | Célula muerta
+           | Alive  -- | Célula viva
            deriving (Show, Eq)
 
 -- | Posición en la grilla (fila, columna)
@@ -46,8 +46,8 @@ type Layout = [Position]
 type Seed = Int
 
 -- | Tipo de vecindad para las reglas de evolucion
-data Neighborhood = Moore      -- ^ Vecindad de Moore (8 vecinos)
-                  | VonNeumann -- ^ Vecindad de Von Neumann (4 vecinos)
+data Neighborhood = Moore      -- | Vecindad de Moore (8 vecinos)
+                  | VonNeumann -- | Vecindad de Von Neumann (4 vecinos)
                   deriving (Show)
 
 -- | Posiciones relativas de los vecinos
@@ -57,8 +57,8 @@ data Neighbor     =   TopLeft     | Top    | TopRight
                     deriving (Show, Eq)
 
 -- | Representación de probabilidades para reglas estocásticas
-data Probability = Prob (Exp Double) -- ^ Probabilidad explícita (0.0 a 1.0)
-                 | Random            -- ^ Probabilidad aleatoria (50%)
+data Probability = Prob (Exp Double) -- | Probabilidad explicita (0.0 a 1.0)
+                 | Random            -- | Probabilidad aleatoria (50%)
                  deriving (Show, Eq)
 
 -------------------------------------------------------------------------------
@@ -103,12 +103,12 @@ type Step = Exp State
 
 -- | Programa completo del autómata celular
 data Program = Program
-  { gridSize      :: GridSize      -- ^ Tamaño de la grilla
-  , neighborhood  :: Neighborhood  -- ^ Tipo de vecindad
-  , stepRule      :: Step          -- ^ Regla de evolución
-  , initialLayout :: Layout        -- ^ Posiciones iniciales vivas
-  , seed          :: Seed          -- ^ Semilla aleatoria
+  { gridSize      :: GridSize      -- | Tamaño de la grilla
+  , neighborhood  :: Neighborhood  -- | Tipo de vecindad
+  , stepRule      :: Step          -- | Regla de evolución
+  , initialLayout :: Layout        -- | Posiciones iniciales vivas
+  , seed          :: Seed          -- | Semilla aleatoria
   }
-  | InvalidProgram  -- ^ Programa inválido 
+  | InvalidProgram  -- | Programa inválido 
   deriving (Show)
 

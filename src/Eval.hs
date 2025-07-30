@@ -61,7 +61,7 @@ getCurrentState = do
     Just state -> return state
     Nothing -> failEval
 
--- Devuelve un numero entre 0 y 1 para usar en withProbability
+-- Devuelve un numero entre 0 y 1 para usar en withProbability, acarreando el nuevo StdGen
 getRandom :: EvalM Double 
 getRandom = EvalM $ \_ _ _ gen ->
   let (r, gen') = randomR (0, 1) gen
@@ -76,7 +76,6 @@ evalProb (Prob e) = do
     let boundedP = max 0 (min 1 p)  
     r <- getRandom
     return (r < boundedP)
-
 evalProb Random = do
     r <- getRandom
     return (r < 0.5)
@@ -92,7 +91,7 @@ getNeighbors = do
                 Moore -> [ (dy, dx) | dy <- [-1..1], dx <- [-1..1], (dy, dx) /= (0, 0) ]
                 VonNeumann -> [ (-1, 0), (1, 0), (0, -1), (0, 1) ]
       
-      -- Aca hacemos que sea toroidal
+      -- | Aca hacemos que sea toroidal
       wrap coord maxCoord = (coord + maxCoord) `mod` maxCoord
       
       neighbors = 
@@ -170,7 +169,6 @@ evalExp (IsNeighbor dir stateExp) = do
   expectedState <- evalExp stateExp
   return (neighborCell == expectedState)
 
--- Podria hacerlo de otra forma para que se evalue solo una vez stateExp
 countMatchingNeighbors :: [State] -> State -> EvalM Double
 countMatchingNeighbors [] _ = return 0
 countMatchingNeighbors (cell:cells) state = do
@@ -187,10 +185,3 @@ evalBin op e0 e1 = do v0 <- evalExp e0
 evalUnary :: (a -> b) -> Exp a -> EvalM b
 evalUnary op e = do v <- evalExp e
                     return (op v)
-
--- Example: 3x3 grid
-gridEx :: Grid
-gridEx = (V.fromList [V.fromList [Dead, Alive, Dead],
-                      V.fromList [Alive, Dead, Alive],
-                      V.fromList [Dead, Alive, Dead]])
- 
