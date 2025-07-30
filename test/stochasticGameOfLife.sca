@@ -1,7 +1,7 @@
 // Autómata celular estocástico (Modelo de crecimiento con ruido)
 defineGridSize 40 40
 
-defineNeighborhood vonNeumann
+defineNeighborhood moore
 
 // Patrón inicial: Dos colonias que interactúan
 defineLayout [
