@@ -57,8 +57,8 @@ data Neighbor     =   TopLeft     | Top    | TopRight
                     deriving (Show, Eq)
 
 -- | Representación de probabilidades para reglas estocásticas
-data Probability = Prob Double  -- ^ Probabilidad explícita (0.0 a 1.0)
-                 | Random       -- ^ Probabilidad aleatoria (50%)
+data Probability = Prob (Exp Double) -- ^ Probabilidad explícita (0.0 a 1.0)
+                 | Random            -- ^ Probabilidad aleatoria (50%)
                  deriving (Show, Eq)
 
 -------------------------------------------------------------------------------
@@ -68,25 +68,25 @@ data Probability = Prob Double  -- ^ Probabilidad explícita (0.0 a 1.0)
 data Exp a where
   
   -- Expresiones enteras
-  Const           :: Int -> Exp Int
-  Count           :: Exp State -> Exp Int
-  UMinus          :: Exp Int -> Exp Int
-  Plus            :: Exp Int -> Exp Int -> Exp Int
-  Minus           :: Exp Int -> Exp Int -> Exp Int
-  Times           :: Exp Int -> Exp Int -> Exp Int
-  Div             :: Exp Int -> Exp Int -> Exp Int
+  Const           :: Double -> Exp Double
+  Count           :: Exp State -> Exp Double
+  UMinus          :: Exp Double -> Exp Double
+  Plus            :: Exp Double -> Exp Double -> Exp Double
+  Minus           :: Exp Double -> Exp Double -> Exp Double
+  Times           :: Exp Double -> Exp Double -> Exp Double
+  Div             :: Exp Double -> Exp Double -> Exp Double
 
   -- Expresiones booleanas
   BTrue           :: Exp Bool
   BFalse          :: Exp Bool
   IsNeighbor      :: Neighbor -> Exp State -> Exp Bool
-  Lt              :: Exp Int -> Exp Int -> Exp Bool
-  Gt              :: Exp Int -> Exp Int -> Exp Bool
+  Lt              :: Exp Double -> Exp Double -> Exp Bool
+  Gt              :: Exp Double -> Exp Double -> Exp Bool
   And             :: Exp Bool -> Exp Bool -> Exp Bool
   Or              :: Exp Bool -> Exp Bool -> Exp Bool
   Not             :: Exp Bool -> Exp Bool
-  Eq              :: Exp Int -> Exp Int -> Exp Bool
-  NEq             :: Exp Int -> Exp Int -> Exp Bool  
+  Eq              :: Exp Double -> Exp Double -> Exp Bool
+  NEq             :: Exp Double -> Exp Double -> Exp Bool  
 
   -- Expresiones de estado
   EDead           :: Exp State

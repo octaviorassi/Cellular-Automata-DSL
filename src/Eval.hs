@@ -15,6 +15,8 @@ import Control.Monad (liftM, ap)
 import System.Random (StdGen, randomR)
 
 -- Definimos la monada que utilizaremos para evaluar
+-- Nos da acceso a los elementos necesarios para evaluar una expresion: la grilla, la posicion actual, el tipo de vecindad utilizada, y la semilla de aleatoriedad.
+-- Utilizamos la mónada Maybe para permitir errores de división y además acarreamos la semilla.
 newtype EvalM a = EvalM 
   { runEval :: Grid -> Position -> Neighborhood -> StdGen -> Maybe (a, StdGen) 
   }
@@ -69,32 +71,35 @@ failEval :: EvalM a
 failEval = EvalM $ \_ _ _ _ -> Nothing
 
 evalProb :: Probability -> EvalM Bool
-evalProb (Prob p) = do
-  if p < 0 || p > 1
-    then failEval
-    else do
-      r <- getRandom
-      return (r < p)
+evalProb (Prob e) = do
+    p <- evalExp e
+    let boundedP = max 0 (min 1 p)  
+    r <- getRandom
+    return (r < boundedP)
+
 evalProb Random = do
-  r <- getRandom
-  return (r < 0.5)
+    r <- getRandom
+    return (r < 0.5)
 
 getNeighbors :: EvalM [State]
 getNeighbors = do
   (y, x) <- getPos
-  neighType <- getNeighborhood  -- Get the neighborhood type
+  neighType <- getNeighborhood
   grid <- getGrid
   let rows = V.length grid
       cols = if rows > 0 then V.length (V.head grid) else 0
       offsets = case neighType of
                 Moore -> [ (dy, dx) | dy <- [-1..1], dx <- [-1..1], (dy, dx) /= (0, 0) ]
-                VonNeumann -> [ (-1, 0), (1, 0), (0, -1), (0, 1) ] 
+                VonNeumann -> [ (-1, 0), (1, 0), (0, -1), (0, 1) ]
+      
+      -- Aca hacemos que sea toroidal
+      wrap coord maxCoord = (coord + maxCoord) `mod` maxCoord
+      
       neighbors = 
-        [ (y + dy, x + dx)
+        [ (wrap (y + dy) rows, wrap (x + dx) cols)
         | (dy, dx) <- offsets
-        , y + dy >= 0 && y + dy < rows  
-        , x + dx >= 0 && x + dx < cols  
         ]
+  
   mapM getCell neighbors
 
 -- Obtiene el valor en cierta celda de forma segura
@@ -115,7 +120,7 @@ evalExp (Times  e0 e1)  = evalBin (*)   e0 e1
 evalExp (Div    e0 e1)  = do v0 <- evalExp e0
                              v1 <- evalExp e1
                              if v1 == 0 then failEval 
-                                        else return (div v0 v1)
+                                        else return (v0 / v1)
 
 evalExp BTrue           = return True
 evalExp BFalse          = return False 
@@ -145,17 +150,9 @@ evalExp (Count e) = do  neighbors <- getNeighbors
                         countMatchingNeighbors neighbors state
 
 evalExp (WithProbability probExpr e1 e2) = do
-  p <- case probExpr of
-        Prob fixedP -> return fixedP
-        Random -> getRandom  
-  
-  if p < 0 || p > 1
-    then failEval  
-    else do
-      rand <- getRandom
-      if rand < p 
-        then evalExp e1 
-        else evalExp e2    
+  cond <- evalProb probExpr
+  if cond then evalExp e1 
+          else evalExp e2
 
 evalExp (IsNeighbor dir stateExp) = do
   (y, x) <- getPos
@@ -174,7 +171,7 @@ evalExp (IsNeighbor dir stateExp) = do
   return (neighborCell == expectedState)
 
 -- Podria hacerlo de otra forma para que se evalue solo una vez stateExp
-countMatchingNeighbors :: [State] -> State -> EvalM Int
+countMatchingNeighbors :: [State] -> State -> EvalM Double
 countMatchingNeighbors [] _ = return 0
 countMatchingNeighbors (cell:cells) state = do
   matchesRest <- countMatchingNeighbors cells state

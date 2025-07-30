@@ -22,8 +22,9 @@ sca = makeTokenParser
     , commentLine     = "//"
     , opLetter        = char '='
     , reservedNames   = ["true", "false", "if", "then", "else", "not", "is",
-                         "withProbability", "do", "random", "count",
+                         "withProbability", "become", "random", "count",
                          "defineGrid", "defineNeighborhood", "defineStep", "defineLayout", "defineSeed",
+                         "moore", "vonNeumann",
                          "alive", "dead",
                          "topleft", "top", "topright",
                          "left", "self", "right",
@@ -41,6 +42,7 @@ sca = makeTokenParser
                         , "=="
                         , "!="
                         , ","
+                        , "."
                         ]
     }
   )
@@ -54,9 +56,9 @@ programParser :: Parser Program
 programParser = do
     size    <- option defaultGridSize gridSizeParser
     neigh   <- option defaultNeighborhood neighborhoodParser
-    step    <- stepParser  -- No permitimos que la regla sea vacia.
     layout  <- option defaultLayout layoutParser
     seed    <- option defaultSeed seedParser
+    step    <- stepParser  -- No permitimos que la regla sea vacia.
     return (Program size neigh step layout seed)
 
 stepParser :: Parser Step
@@ -119,37 +121,48 @@ defaultLayout = []
 
 
 -------------------------------------------------------------------------------
--- * Parser de expresiones enteras
+-- * Parser de expresiones numericas
 -------------------------------------------------------------------------------
 
-intexp :: Parser (Exp Int)
-intexp = chainl1 termParser addMinusOp
+floatexp :: Parser (Exp Double)
+floatexp = chainl1 termParser addMinusOp
 
-addMinusOp :: Parser (Exp Int -> Exp Int -> Exp Int)
+addMinusOp :: Parser (Exp Double -> Exp Double -> Exp Double)
 addMinusOp = try ( do { reservedOp sca "+" ; return Plus } ) <|>
                    do { reservedOp sca "-" ; return Minus }
 
 
-termParser :: Parser (Exp Int)
+termParser :: Parser (Exp Double)
 termParser = chainl1 factorParser mulDivOp
 
-mulDivOp :: Parser (Exp Int -> Exp Int -> Exp Int)
+mulDivOp :: Parser (Exp Double -> Exp Double -> Exp Double)
 mulDivOp = try ( do { reservedOp sca "*" ; return Times } ) <|>
                  do { reservedOp sca "/" ; return Div }
                  
 
-factorParser :: Parser (Exp Int)
+factorParser :: Parser (Exp Double)
 factorParser =  try (do reservedOp sca "-"
                         f <- factorParser
                         return (UMinus f))
                 <|> atomParser
 
-atomParser :: Parser (Exp Int)
-atomParser = try countParser
-         <|> try (parens sca intexp)
-         <|> (do { n <- natural sca ; return (Const (fromInteger n))})
 
-countParser :: Parser (Exp Int)
+atomParser :: Parser (Exp Double)
+atomParser = try countParser
+         <|> try (parens sca floatexp)
+         <|> numericLiteral  
+  where
+    numericLiteral = do
+        n <- try floatNumber <|> naturalNumber
+        return (Const n)
+    
+    floatNumber = float sca 
+
+    naturalNumber = do
+        i <- natural sca
+        return (fromIntegral i)  
+
+countParser :: Parser (Exp Double)
 countParser = do
     reserved sca "count"   
     e <- stateexp         
@@ -176,10 +189,10 @@ andTermParser = try (do reservedOp sca "!"
 
 atomBoolParser :: Parser (Exp Bool)
 atomBoolParser = (try (parens sca boolexp))                                                              <|> 
-                 (try ( do { e1 <- intexp ; reservedOp sca "==" ; e2 <- intexp ; return (Eq e1 e2)  } )) <|>
-                 (try ( do { e1 <- intexp ; reservedOp sca "!=" ; e2 <- intexp ; return (NEq e1 e2) } )) <|>
-                 (try ( do { e1 <- intexp ; reservedOp sca "<"  ; e2 <- intexp ; return (Lt e1 e2)  } )) <|>
-                 (try ( do { e1 <- intexp ; reservedOp sca ">"  ; e2 <- intexp ; return (Gt e1 e2)  } )) <|>
+                 (try ( do { e1 <- floatexp ; reservedOp sca "==" ; e2 <- floatexp ; return (Eq e1 e2)  } )) <|>
+                 (try ( do { e1 <- floatexp ; reservedOp sca "!=" ; e2 <- floatexp ; return (NEq e1 e2) } )) <|>
+                 (try ( do { e1 <- floatexp ; reservedOp sca "<"  ; e2 <- floatexp ; return (Lt e1 e2)  } )) <|>
+                 (try ( do { e1 <- floatexp ; reservedOp sca ">"  ; e2 <- floatexp ; return (Gt e1 e2)  } )) <|>
                  (try ( do { reserved sca "false" ; return BFalse } ))                                   <|>
                  (try ( do { reserved sca "true"  ; return BTrue  } ))                                   <|>
                  (try isNeighborParser)                                                                    
@@ -245,23 +258,29 @@ withProbabilityParser :: Parser (Exp State)
 withProbabilityParser = do
     reserved sca "withProbability"
     p <- probParser
-    reserved sca "do"
+    reserved sca "become"
     thenExp <- stateexp
     reserved sca "else"
     elseExp <- stateexp
     return (WithProbability p thenExp elseExp)
 
 probParser :: Parser Probability
-probParser = try percentageParser <|>
+probParser = try arithmeticProbParser <|>
+             try percentageParser <|>
              try decimalParser <|>
-             try randomParser
+             try randomParser <|>
+             parens sca probParser
   where
+    arithmeticProbParser = do
+        expr <- parens sca floatexp  
+        return (Prob expr) 
+
     percentageParser  = do  n <- natural sca  
                             optional (symbol sca "%")
-                            return (Prob (fromInteger n / 100))
+                            return (Prob (Const (fromInteger n / 100))) 
     
     decimalParser     = do  n <- float sca    
-                            return (Prob n)   
+                            return (Prob (Const n))   
 
     randomParser = do reserved sca "random"
                       return Random   

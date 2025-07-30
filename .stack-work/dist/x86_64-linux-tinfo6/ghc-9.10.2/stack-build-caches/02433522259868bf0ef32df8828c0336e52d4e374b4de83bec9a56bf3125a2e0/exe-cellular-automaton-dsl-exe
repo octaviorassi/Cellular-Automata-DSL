@@ -5,10 +5,10 @@
 ? /home/octavio/materias/alp/cellular-automaton-dsl/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.10.2/build/cellular-automaton-dsl-exe/autogen/cabal_macros.h
 : hash: 704358e2ce223f07b4a8fb5b6c28c5eb4c5e0183e0cefac75499b5ba76e77d13
 /home/octavio/materias/alp/cellular-automaton-dsl/app/Main.hs:
-  hash: 70902f0001381aa57ab07f57abd66952b44cf92d80c5aef8bee3a3f0d8f4c71c
+  hash: fa8accebdc56ea003ffe1df03c612569dfb5ebccb1d0c68b5121a4e84280e09e
 /home/octavio/materias/alp/cellular-automaton-dsl/cellular-automaton-dsl.cabal:
   hash: e1498b81b97bfbe56bb61c76aff85f87ef26e9f4ea8e1cdaeb33fdc7530bc189
 /home/octavio/materias/alp/cellular-automaton-dsl/package.yaml:
-  hash: 7b4b8ef48fc669639861544b3778509bc5e99e63602d226e75afa4edd7278ffe
+  hash: abe2d521b448eb3d642a3f5bd925d4c9de550fccbfaee8a23a5768594527b576
 /usr/include/stdc-predef.h:
   hash: 8db4f65e62cade8ae4d9b77960ee6aee093255acc1b637e3fb37d79179733b15

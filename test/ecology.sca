@@ -1,0 +1,38 @@
+// Autómata celular estocástico (Modelo de expansión y extinción ecológica)
+defineGridSize 50 50
+
+defineNeighborhood moore  // incluye diagonales
+
+// Patrón inicial: varias manchas ecológicas separadas
+defineLayout [
+    // Colonia central
+    (25,25),(25,26),(25,27),
+    (26,25),(26,27),
+    (27,25),(27,26),(27,27),
+
+    // Brotes dispersos
+    (10,10),(10,11),(11,10),
+    (40,40),(39,40),(40,39),
+    (5,45),(5,46),(6,45),
+
+    // Línea de expansión
+    (20,30),(21,30),(22,30),(23,30),(24,30)
+]
+
+defineSeed 2025
+
+// Regla estocástica:
+// - Si está viva:
+//     - Muere si hay menos de 2 vecinos vivos (soledad) con 70%
+//     - Muere si hay más de 4 vecinos vivos (sobrepoblación) con 80%
+// - Si está muerta:
+//     - Nace con probabilidad 20% si tiene exactamente 3 vecinos vivos
+defineStep
+    if self is alive
+    then if (count alive < 2)
+          then withProbability 70% become dead
+          else if (count alive > 4)
+               then withProbability 80% become dead 
+               else alive
+    else (if (count alive == 3)
+          then withProbability 20% become alive else dead)
