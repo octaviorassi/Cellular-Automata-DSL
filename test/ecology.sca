@@ -1,5 +1,5 @@
 // Autómata celular estocástico (Modelo de expansión y extinción ecológica)
-defineGridSize 50 50
+defineGridSize 40 40
 
 defineNeighborhood moore  // incluye diagonales
 
@@ -29,10 +29,12 @@ defineSeed 2025
 //     - Nace con probabilidad 20% si tiene exactamente 3 vecinos vivos
 defineStep
     if self is alive
-    then if (count alive < 2)
-          then withProbability 70% become dead
-          else if (count alive > 4)
-               then withProbability 80% become dead 
-               else alive
+    then (if (count alive < 2)
+          then (withProbability 70% become dead else become alive)
+          else (if (count alive > 4)
+                then (withProbability 80% become dead else become alive)
+                else alive))
     else (if (count alive == 3)
-          then withProbability 20% become alive else dead)
+          then (withProbability 20% become alive else become dead)
+          else dead)
+

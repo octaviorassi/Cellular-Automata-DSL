@@ -261,6 +261,7 @@ withProbabilityParser = do
     reserved sca "become"
     thenExp <- stateexp
     reserved sca "else"
+    reserved sca "become"
     elseExp <- stateexp
     return (WithProbability p thenExp elseExp)
 

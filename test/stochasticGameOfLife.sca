@@ -29,10 +29,10 @@ defineSeed 420  // Semilla fija para reproducibilidad
 // 2. Células muertas pueden nacer con probabilidad proporcional a vecinos vivos
 defineStep if self is alive
            then (if (count alive > 4)
-                 then withProbability 80% become dead else alive  // 80% de morir si hay sobrepoblación
+                 then withProbability 80% become dead else become alive  // 80% de morir si hay sobrepoblación
                  else (if (count alive < 2)
                        then dead
                        else alive))
            else (withProbability ((count alive) * 0.1)  // 10% por cada vecino vivo
                   become alive 
-                  else dead)
+                  else become dead)
